@@ -10,18 +10,18 @@ import Foundation
 extension Geohash {
     
     public struct Region {
-        let northLatitude: Double
-        let southLatitude: Double
-        let westLongitude: Double
-        let eastLongitude: Double
+        public let northLatitude: Double
+        public let southLatitude: Double
+        public let westLongitude: Double
+        public let eastLongitude: Double
+        
+        public var latitudeMidPoint: Double { (northLatitude + southLatitude) / 2 }
+        public var longitudeMidPoint: Double { (westLongitude + eastLongitude) / 2 }
         
         static let root = Region(
             northLatitude: 90, southLatitude: -90,
             westLongitude: 180, eastLongitude: -180
         )
-        
-        var latitudeMidPoint: Double { (northLatitude + southLatitude) / 2 }
-        var longitudeMidPoint: Double { (westLongitude + eastLongitude) / 2 }
         
         func halfed(longitudinally: Bool, keepNorthWestHemisphere: Bool) -> Self {
             Region(
@@ -30,6 +30,12 @@ extension Geohash {
                 westLongitude: longitudinally && !keepNorthWestHemisphere ? longitudeMidPoint : westLongitude,
                 eastLongitude: longitudinally && keepNorthWestHemisphere ? longitudeMidPoint : eastLongitude
             )
+        }
+        
+        func contains(_ subRegion: Region) -> Bool {
+            let latitudeCheck = northLatitude > subRegion.northLatitude && southLatitude < subRegion.southLatitude
+            let longitudeCheck = westLongitude > subRegion.westLongitude && eastLongitude < subRegion.eastLongitude
+            return latitudeCheck && longitudeCheck
         }
     }
     
