@@ -18,6 +18,16 @@ extension Geohash {
         public var latitudeMidPoint: Double { (northLatitude + southLatitude) / 2 }
         public var longitudeMidPoint: Double { (westLongitude + eastLongitude) / 2 }
         
+        public init(northLatitude: Double,
+             southLatitude: Double,
+             westLongitude: Double,
+             eastLongitude: Double) {
+            self.northLatitude = northLatitude
+            self.southLatitude = southLatitude
+            self.westLongitude = westLongitude
+            self.eastLongitude = eastLongitude
+        }
+        
         static let root = Region(
             northLatitude: 90, southLatitude: -90,
             westLongitude: 180, eastLongitude: -180

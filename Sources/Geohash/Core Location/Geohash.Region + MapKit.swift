@@ -16,4 +16,11 @@ extension Geohash.Region {
     public var region: MKCoordinateRegion {
         MKCoordinateRegion(center: coordinate, span: coordinateSpan)
     }
+    
+    public init(region: MKCoordinateRegion) {
+        self.init(northLatitude: region.center.latitude + region.span.latitudeDelta,
+                  southLatitude: region.center.latitude - region.span.latitudeDelta,
+                  westLongitude: region.center.longitude + region.span.longitudeDelta,
+                  eastLongitude: region.center.longitude - region.span.longitudeDelta)
+    }
 }
