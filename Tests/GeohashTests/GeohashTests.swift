@@ -14,7 +14,7 @@ final class GeoHashTests: XCTestCase {
     
     func testEncoding() {
         for (hash, (latitude, longitude, _)) in geohashes {
-            XCTAssertEqual(hash, Geohash.encode(latitude: latitude, longitude: longitude, precision: hash.count).string)
+            XCTAssertEqual(hash, Geohash.regionContaining(latitude: latitude, longitude: longitude, precision: hash.count).string)
         }
     }
     
@@ -22,7 +22,7 @@ final class GeoHashTests: XCTestCase {
         for (hash, (latitude, longitude, decimalPrecision)) in geohashes {
             let accuracy = pow(10, Double(-decimalPrecision))
             do {
-                let result = try Geohash.decode(string: hash)
+                let result = try Geohash.region(forHash: hash)
                 XCTAssertEqual(result.latitudeMidPoint, latitude, accuracy: accuracy)
                 XCTAssertEqual(result.longitudeMidPoint, longitude, accuracy: accuracy)
             } catch {

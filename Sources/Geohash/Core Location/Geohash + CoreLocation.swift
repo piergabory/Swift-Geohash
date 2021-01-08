@@ -8,8 +8,8 @@
 import CoreLocation
 
 extension Geohash {
-    public static func encode(coordinate: CLLocationCoordinate2D, precision: Int = 12) -> Geohash {
-        encode(latitude: coordinate.latitude, longitude: coordinate.longitude, precision: precision)
+    public static func regionContaining(coordinate: CLLocationCoordinate2D, precision: Int = 12) -> Geohash {
+        regionContaining(latitude: coordinate.latitude, longitude: coordinate.longitude, precision: precision)
     }
 }
 

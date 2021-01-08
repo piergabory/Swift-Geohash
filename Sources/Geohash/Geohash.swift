@@ -9,7 +9,7 @@ public struct Geohash {
     private static let alphabet: [Character] = Array("0123456789bcdefghjkmnpqrstuvwxyz")
     private static let subRegionBitMasks = (0...4).reversed().map { 1 << $0 }
     
-    public static func decode(string: String) throws -> Region {
+    public static func region(forHash string: String) throws -> Region {
         let bits = try Geohash.binaryRepresentation(of: string)
         var region = Region.root
         for index in bits.indices {
@@ -18,30 +18,30 @@ public struct Geohash {
         return region
     }
     
-    public static func encode(latitude: Double, longitude: Double, precision: Int = 12) -> Geohash {
+    public static func regionContaining(latitude: Double, longitude: Double, precision: Int = 12) -> Geohash {
         var hash = Geohash(string: "", region: .root)
         while hash.precision < precision {
-           hash = refine(geohash: hash, towards: latitude, longitude)
+            hash = hash.refine(towards: latitude, longitude)
         }
         return hash
     }
     
-    public static func findRegionContaining(subregion: Region) -> Geohash {
+    public static func regionContaining(subregion: Region) -> Geohash {
         var hash = Geohash(string: "", region: .root)
         var previous = hash
         while hash.region.contains(subregion) {
             previous = hash
-            hash = refine(geohash: hash, towards: subregion.latitudeMidPoint, subregion.longitudeMidPoint)
+            hash = hash.refine(towards: subregion.latitudeMidPoint, subregion.longitudeMidPoint)
         }
         return previous
     }
     
-    private static func refine(geohash: Geohash, towards latitude: Double, _ longitude: Double) -> Geohash {
+    private func refine(towards latitude: Double, _ longitude: Double) -> Geohash {
         var alphabetIndex = 0
-        var sliceLongitudinally = geohash.string.count % 2 == 0
-        var subregion = geohash.region
+        var sliceLongitudinally = string.count % 2 == 0
+        var subregion = region
         
-        for bitMask in subRegionBitMasks {
+        for bitMask in Geohash.subRegionBitMasks {
             let keepNorthWestHemisphere: Bool
             
             if sliceLongitudinally {
@@ -56,7 +56,7 @@ public struct Geohash {
             if keepNorthWestHemisphere { alphabetIndex |= bitMask }
         }
         
-        return Geohash(string: geohash.string + [alphabet[alphabetIndex]], region: subregion)
+        return Geohash(string: string + [Geohash.alphabet[alphabetIndex]], region: subregion)
     }
     
     private static func binaryRepresentation(of geohashString: String) throws -> [Bool] {
